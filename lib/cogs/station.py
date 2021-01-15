@@ -111,10 +111,10 @@ class Station(Cog):
     async def station_report(self, ctx, station: Optional[int]):
         logger.debug(f'{ctx.author.display_name} has requested a station report. Provided station: {station}')
         if station:
+            # If we're only reporting one station we can send to channel
             cfs_data = get_daily_site_data([station])
             fig = create_line_charts(cfs_data)
             pic = export_png(fig)
-            # If we're only reporting one station we can send to channel
             embed = Embed(title=f"Station report for {cfs_data['value']['timeSeries'][0]['sourceInfo']['siteName']} ({station})",
                           description='Graph displays streamflow volume in cubic feet per second for the previous 30 days')
             embed.set_image(url=f'https://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no={station}&parm_cd=00060&period=30')
