@@ -143,3 +143,5 @@ cython_debug/
 
 # Additional exclusions
 lib/bot/token.0
+data/db/database.db
+temp
