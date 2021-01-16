@@ -1,4 +1,4 @@
-__version__ = "0.0.14"
+__version__ = "0.0.15"
 
 from asyncio import sleep
 from glob import glob

@@ -1,4 +1,5 @@
 import logging
+import datetime
 from typing import Optional
 
 import discord
@@ -113,11 +114,21 @@ class Station(Cog):
         if station:
             # If we're only reporting one station we can send to channel
             cfs_data = get_daily_site_data([station])
-            fig = create_line_charts(cfs_data)
+            station_name = cfs_data['value']['timeSeries'][0]['sourceInfo']['siteName']
+            last_measurement = cfs_data['value']['timeSeries'][0]['values'][0]['value'][-1]['value']
+            fig = create_line_charts(cfs_data, chart_title=f'{station_name}')
             pic = export_png(fig, filename='temp/station_report.png')
-            embed = Embed(title=f"Station report for {cfs_data['value']['timeSeries'][0]['sourceInfo']['siteName']} ({station})",
-                          description='Graph displays streamflow volume in cubic feet per second for the previous 30 days')
-            embed.set_image(url=f'https://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no={station}&parm_cd=00060&period=30')
+            desc = f'The first graph is a USGS generated graph requesting data from the previous ' \
+                   f'30 days although they often only graph data from the previous week. The lower graph ' \
+                   f'is bot generated using USGS data from the previous 30 days.\n\nCurrent flow: {last_measurement}'
+            embed = Embed(title=f"Station report for {station_name} ({station})", description=desc)
+            """
+            The Discord application will cache the image content so we need to use the data filter with the USGS link 
+            to ensure that the url also changes on a daily basis
+            """
+            current_date = datetime.datetime.today()
+            month_past = current_date - datetime.timedelta(days=30)
+            embed.set_image(url=f'https://waterdata.usgs.gov/nwisweb/graph?agency_cd=USGS&site_no={station}&parm_cd=00060&startDT={month_past:%Y-%m-%d}')
             await ctx.send(embed=embed)
             await ctx.send(file=discord.File(pic))
         else:
