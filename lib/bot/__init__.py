@@ -1,5 +1,6 @@
 __version__ = "0.1.0"
 
+import configparser
 import os
 import pytz
 
@@ -15,6 +16,9 @@ from ..db import db
 
 OWNER_IDS = [208449015015145472]
 COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
+
+config = configparser.ConfigParser()
+config.read('./lib/bot/settings/bot.ini')
 
 
 def get_prefix(bot, message):
@@ -42,6 +46,8 @@ class Bot(BotBase):
         self.TOKEN = None
         self.ready = False
         self.cogs_ready = Ready()
+        self.guild_id = None
+        self.channel_id = None
         self.guild = None
         self.stdout = None
         self.scheduler = AsyncIOScheduler()
@@ -54,7 +60,12 @@ class Bot(BotBase):
             intents=Intents.all(),
         )
 
+    def get_guild_channel(self):
+        self.guild_id = int(config['DEFAULT']['guild'])
+        self.channel_id = int(config['DEFAULT']['channel'])
+
     def setup(self):
+        self.get_guild_channel()
         for cog in COGS:
             self.load_extension(f'lib.cogs.{cog}')
 
@@ -112,8 +123,8 @@ class Bot(BotBase):
 
     async def on_ready(self):
         if not self.ready:
-            self.guild = self.get_guild(786104547113566218)
-            self.stdout = self.get_channel(789670241663582238)
+            self.guild = self.get_guild(self.guild_id)
+            self.stdout = self.get_channel(self.channel_id)
             self.scheduler.start()
 
             self.update_db()
