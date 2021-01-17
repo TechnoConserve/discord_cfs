@@ -1,11 +1,10 @@
-__version__ = "0.0.15"
+__version__ = "0.1.0"
 
-from asyncio import sleep
-from glob import glob
-
+import os
 import pytz
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from asyncio import sleep
 from datetime import datetime
 from discord import Embed, HTTPException, Forbidden
 from discord import Intents
@@ -15,7 +14,7 @@ from discord.ext.commands import Bot as BotBase, CommandNotFound, BadArgument, C
 from ..db import db
 
 OWNER_IDS = [208449015015145472]
-COGS = [path.split('\\')[-1][:-3] for path in glob('./lib/cogs/*.py')]
+COGS = [path[:-3] for path in os.listdir('./lib/cogs') if path[-3:] == '.py']
 
 
 def get_prefix(bot, message):

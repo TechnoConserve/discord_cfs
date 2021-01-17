@@ -145,3 +145,4 @@ cython_debug/
 lib/bot/token.0
 data/db/database.db
 temp
+lib/bot/settings
