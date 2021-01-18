@@ -2,19 +2,21 @@ import datetime
 
 from bokeh.plotting import figure
 
+from .get_cfs_data import get_station_name
 
-def create_line_charts(json_data, chart_title=''):
+
+def create_line_charts(json_data):
     figs = []
-    for station in json_data['value']['timeSeries']:
-        if 'Streamflow' in station['variable']['variableName']:
+    for station_data in json_data['value']['timeSeries']:
+        if 'Streamflow' in station_data['variable']['variableName']:
             cfs_values = []
             time_values = []
-            for data_value in station['values'][0]['value']:
+            for data_value in station_data['values'][0]['value']:
                 cfs_values.append(data_value['value'])
                 time_values.append(datetime.datetime.strptime(data_value['dateTime'][:10], '%Y-%m-%d'))
 
             fig = figure(
-                title=chart_title,
+                title=get_station_name(station_data['sourceInfo']['siteCode'][0]['value']),
                 plot_width=800,
                 plot_height=300,
                 x_axis_type="datetime",
