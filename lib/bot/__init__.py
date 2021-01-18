@@ -1,4 +1,4 @@
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 import configparser
 import os
@@ -137,7 +137,9 @@ class Bot(BotBase):
                           timestamp=current_time)
             fields = [('Version', self.VERSION, True),
                       ('Bot Amazingness Level', 'Maximum', True),
-                      ('Data Source', 'USGS National Water Information System (https://waterdata.usgs.gov)', False)]
+                      ('Data Source', 'USGS National Water Information System (https://waterdata.usgs.gov)', False),
+                      ('Updates', '01/18/2021 : `!report` command now returns a graph for all the users subscriptions',
+                       False)]
             embed.set_author(name='Streamflow Grapher Bot', icon_url=self.guild.icon_url)
             for name, value, inline in fields:
                 embed.add_field(name=name, value=value, inline=inline)
