@@ -153,7 +153,7 @@ class Bot(BotBase):
             print('Bot reconnected.')
 
     async def on_message(self, message):
-        if not message.author.bot:
+        if not message.author.bot and message.channel.id == self.channel_id:
             await self.process_commands(message)
 
     def update_db(self):
