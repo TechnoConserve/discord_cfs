@@ -13,15 +13,16 @@ Find a station using the [National Water Information System Mapping Tool](https:
 make note of the location's "Site Number." Tell the bot you want to subscribe
 to the station using the command `!add_station SiteNumber`. For example,
 to subscribe to the "GREEN RIVER NEAR GREENDALE, UT" station with a site number of 
-09234500, the command would be `!09234500`.
+09234500, the command would be `!add_station 09234500`.
 
 You won't need to commit these site numbers to memory. To list out the stations you're
 subscribed to, and to get their site numbers, use the command `!list_stations`.
 
-You can request a report of a given station using the `!station_report` command. The report
-includes a USGS created graph of streamflow data along with a bot generated line graph also
-of streamflow data. Both graphs request the previous 30 days worth of streamflow data but
-you may find that the USGS graph does not actually extend that far back in the past. 
+You can request a report of a given station using the `!station_report StationID` command
+(e.g. `!station_report 09234500`). The report includes a USGS created graph of streamflow 
+data along with a bot generated line graph also of streamflow data. Both graphs request the 
+previous 30 days worth of streamflow data but you may find that the USGS graph does not 
+actually extend that far back in the past. 
 
 ## Commands
 
