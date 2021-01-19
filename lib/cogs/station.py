@@ -9,7 +9,7 @@ from discord.ext.commands import Cog, command, BucketType, cooldown
 
 from ..bot import get_prefix
 from ..db import db
-from ..utils.get_cfs_data import get_daily_site_data, get_station_name
+from ..utils.get_cfs_data import get_daily_site_data, get_latest_values, get_station_name
 from ..utils.graph_cfs import create_line_charts
 
 logger = logging.getLogger(__name__)
@@ -126,13 +126,19 @@ class Station(Cog):
             await ctx.send(embed=embed)
             await ctx.send(file=discord.File(pic))
         else:
-            station_ids = [station[0] for station in get_stations(ctx.author.id)]
+            stations = get_stations(ctx.author.id)
+            station_ids = [station[0] for station in stations]
+            station_names = [station[1] for station in stations]
             if not station_ids:
                 await no_subs_msg(self.bot, ctx)
             cfs_data = get_daily_site_data(station_ids)
             figs = create_line_charts(cfs_data)
-            # TODO add latest datapoint for each station to description
+            latest_values = get_latest_values(cfs_data)
             embed = Embed(title=f'Station report for {ctx.author.display_name}\'s station subscriptions')
+            embed.add_field(name="Station ID", value='\n'.join([str(station_id) for station_id in station_ids]))
+            embed.add_field(name="Station Name",
+                            value='\n'.join([name[:40] + '...' if len(name) > 44 else name for name in station_names]))
+            embed.add_field(name="Latest CFS Value", value='\n'.join([data[1] for data in latest_values]))
             await ctx.send(embed=embed)
             for station_idx, fig in enumerate(figs):
                 pic = export_png(fig, filename=f'temp/{station_ids[station_idx]}_report.png')

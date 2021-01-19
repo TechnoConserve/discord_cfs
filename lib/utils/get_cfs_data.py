@@ -34,6 +34,19 @@ def check_site_existence(station_id):
         return content['value']['timeSeries'][0]['sourceInfo']['siteName']
 
 
+def get_latest_values(json_data):
+    """
+    Creates and returns a list of tuples matching station ID to the latest streamflow reading from the given json_data.
+    :param json_data: Dictionary of streamflow data pulled from the USGS waterdata service.
+    :return: list of tuples [(x, y), ...] where x equals the station ID and y equals the most recent CFS value in the
+    given json_data
+    """
+    latest_data = []
+    for station_data in json_data['value']['timeSeries']:
+        latest_data.append(([station_data['sourceInfo']['siteCode'][0]['value']], station_data['values'][0]['value'][-1]['value']))
+    return latest_data
+
+
 def get_station_name(station_id: int):
     logger.debug(f'Checking if station {station_id} exists in the database already')
     station_name = db.record('SELECT StationName FROM stations WHERE StationID = ?', station_id)
